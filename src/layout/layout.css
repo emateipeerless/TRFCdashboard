@@ -1,0 +1,64 @@
+/* src/layout/layout.css */
+:root {
+--bg:#0d1117; --panel:#161b22; --border:#30363d; --text:#e6edf3; --muted:#9da7b3;
+}
+
+/* App shell */
+.app-shell { display:flex; min-height:100vh; background:var(--bg); color:var(--text); }
+.main-col { flex:1; display:flex; flex-direction:column; }
+.page { padding:20px; }
+
+/* Sidebar */
+.sidebar {
+width:240px; background:#0b0f14; border-right:1px solid var(--border);
+display:flex; flex-direction:column;
+}
+.brand { font-weight:700; font-size:20px; padding:20px; letter-spacing:.5px; }
+.brand span { color:#6fa8ff; }
+
+.nav { display:flex; flex-direction:column; gap:4px; padding:0 12px; }
+.nav-link {
+padding:10px 12px; border-radius:8px; color:var(--text);
+text-decoration:none; border:1px solid transparent;
+}
+.nav-link.active, .nav-link:hover {
+background:var(--panel); border-color:var(--border);
+}
+
+.sidebar-foot { margin-top:auto; padding:12px; color:var(--muted); font-size:12px; }
+
+/* Top bar */
+.topbar2 {
+display:flex; align-items:center; gap:12px; padding:16px 20px;
+border-bottom:1px solid var(--border); background:var(--bg);
+}
+.topbar2 h1 { font-size:18px; margin:0; }
+.grow { flex:1; }
+.user-pill { display:flex; align-items:center; gap:10px; }
+.user-pill button {
+background:#21262d; border:1px solid var(--border); color:var(--text);
+padding:6px 10px; border-radius:6px; cursor:pointer;
+}
+
+/* Cards / basic containers (used by pages) */
+.card2 {
+background:var(--panel); border:1px solid var(--border);
+border-radius:12px; padding:16px;
+}
+.row2 { display:flex; align-items:center; gap:10px; margin-bottom:12px; }
+.row2 input {
+padding:8px 10px; border:1px solid var(--border); border-radius:8px;
+background:var(--bg); color:var(--text); min-width:260px;
+}
+.row2 button, .link2 {
+border:1px solid var(--border); background:#21262d; color:var(--text);
+padding:8px 12px; border-radius:8px; cursor:pointer; text-decoration:none;
+}
+
+/* Utilities */
+.muted { color:var(--muted); font-size:12px; }
+
+/* Responsive */
+@media (max-width: 640px) {
+.sidebar { display:none; }
+}

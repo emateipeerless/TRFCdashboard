@@ -1,0 +1,122 @@
+:root {
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+}
+
+body {
+  margin: 0;
+  background: #0d1117;
+  color: #e6edf3;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.topbar .spacer {
+  flex: 1;
+}
+
+button {
+  padding: 8px 12px;
+  border: 1px solid #30363d;
+  background: #21262d;
+  color: #e6edf3;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.card {
+  background: #161b22;
+  border: 1px solid #30363d;
+  border-radius: 10px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+input {
+  flex: 1;
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid #30363d;
+  background: #0d1117;
+  color: #e6edf3;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.grid2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.tile {
+  background: #0d1117;
+  border: 1px solid #30363d;
+  border-radius: 8px;
+  padding: 12px;
+}
+
+.tile-label {
+  font-size: 0.8rem;
+  opacity: 0.8;
+}
+
+.tile-value {
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.list-item {
+  padding: 12px;
+  border: 1px solid #30363d;
+  border-radius: 10px;
+  background: #0d1117;
+}
+
+.chips {
+  display: flex;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.chip {
+  font-size: 0.85rem;
+  padding: 4px 8px;
+  border: 1px solid #30363d;
+  border-radius: 999px;
+  background: #161b22;
+}
+
+.error {
+  color: #ff8080;
+}
