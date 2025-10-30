@@ -4,14 +4,14 @@ export default function Gauge90({
   min = 0,
   max = 100,
   units = '',
-  size = 180,
+  size = 200,
   goodMin,
   goodMax,
   warnMargin = 0,
 }) {
   const clamped = clamp(value, min, max);
   const pct = (clamped - min) / (max - min || 1);
-  const startAngle = -90;
+  const startAngle = -180;
   const endAngle = 0;
   const angle = startAngle + pct * (endAngle - startAngle);
 
@@ -35,7 +35,7 @@ export default function Gauge90({
 
   return (
     <div className={`g90-wrap status-${status}`} style={{ width: w }}>
-      <svg width={w} height={h} viewBox={`0 0 ${w} ${h}`} role="img" aria-label={`${label} gauge`}>
+      <svg width={w} height={h} viewBox={`0 0 ${w*1.25} ${h}`} role="img" aria-label={`${label} gauge`}>
         {/* background arc */}
         <path
           d={`M ${arcStart.x} ${arcStart.y} A ${r} ${r} 0 0 1 ${arcEnd.x} ${arcEnd.y}`}
