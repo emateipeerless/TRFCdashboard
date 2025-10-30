@@ -88,3 +88,11 @@ export async function postDeviceOTA(deviceId, version) {
     };
   }
 }
+
+export async function vibestats(deviceId, { window = '7d', limit = 20 } = {}, signal) {
+// Adjust URL to your backend route
+const url = `/api/devices/${encodeURIComponent(deviceId)}/vibration/diagnostics?window=${encodeURIComponent(window)}&limit=${limit}`;
+const res = await fetch(url, { signal });
+if (!res.ok) throw new Error(`Diagnostics fetch failed: ${res.status}`);
+return await res.json();
+}

@@ -1,6 +1,6 @@
 import Sidebar from './SideBar';
 import Topbar from './TopBar';
-import './layout.css'; // optional, or merge into styles.css
+import './layout.css'; 
 
 export default function AppLayout({ children }) {
   return (

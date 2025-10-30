@@ -179,3 +179,7 @@ button.danger:hover { background:#3a1418; }
 .actions { display:flex; gap:8px; align-items:center; }
 .link2.subtle { opacity:.8 }
 .link2.subtle:hover { opacity:1 }
+
+
+.chartgrp{display:flex; margin-left:380px}
+.lastone{display:flex; align-items: center;margin-left: 540px;}
