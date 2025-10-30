@@ -199,7 +199,7 @@ function KPI({ label, value }) {
  * White Themed Inline Bar Chart
  * ------------------------------ */
 function MiniBarChart({ items, height = 160, yLabel }) {
-  const width = Math.max(600, items.length * 28 + 60);
+  const width = Math.max(1500, items.length * 28 + 60);
   const pad = { top: 20, right: 10, bottom: 28, left: 40 };
   const innerW = width - pad.left - pad.right;
   const innerH = height - pad.top - pad.bottom;

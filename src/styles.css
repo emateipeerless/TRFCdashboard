@@ -181,5 +181,5 @@ button.danger:hover { background:#3a1418; }
 .link2.subtle:hover { opacity:1 }
 
 
-.chartgrp{display:flex; margin-left:380px}
+.chartgrp{display:flex; margin-left:10px}
 .lastone{display:flex; align-items: center;margin-left: 540px;}
