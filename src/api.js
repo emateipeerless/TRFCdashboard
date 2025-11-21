@@ -30,6 +30,17 @@ export async function listDevicesBySite(siteId, nextKey = null, limit = 50, sign
   return authFetch(`/sites/${encodeURIComponent(siteId)}/devices?${qs.toString()}`, signal);
 }
 
+//proto bring in data
+export async function getProtoData(deviceid=null,signal){
+  try{
+      return await authFetch('/protodata',signal);
+  }catch(e){
+    console.error("Error in getProtoData:",e);
+    throw e;
+  }
+}
+
+
 
 // --- Firmware: get latest available from cloud (stub-friendly) ---
 export async function getFirmwareLatest(model = 'golf-pump', signal) {
