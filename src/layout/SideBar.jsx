@@ -12,7 +12,6 @@ export default function Sidebar() {
         <NavLink to="/device/TRFC2" className="nav-link">TRFC2</NavLink>
         <NavLink to="/device/TRFC3" className="nav-link">TRFC3</NavLink>
         <NavLink to="/prototype" className="nav-link">Prototype Page</NavLink>
-        <NavLink to="/testing" className="nav-link">TESTINGGRAPH</NavLink>
       </nav>
       <div className="sidebar-foot">Peerless Pump v0.1</div>
     </aside>

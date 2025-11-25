@@ -6,7 +6,7 @@ export default function Topbar() {
 
   return (
     <header className="topbar2">
-      <h1>Main Dashboard</h1>
+      <h1>Turf Connect Dashboard</h1>
       <div className="grow" />
       <div className="user-pill">
         <span>{email}</span>
