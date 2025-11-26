@@ -3,16 +3,21 @@ import { listDevicesBySite } from '../api';
 import Loader from '../components/Loader';
 import EmptyState from '../components/EmptyState';
 import StatusPill from '../components/StatusPill';
+import { useSites } from '../SitesContext';
 
 export default function Sites() {
-  const [siteId, setSiteId] = useState('PumpHouse-1');
+  const [siteId, setSiteId] = useState('');
   const [items, setItems] = useState([]);
   const [nextKey, setNextKey] = useState(null);
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState('');
   const abortRef = useRef();
 
-  const search = async (reset = true) => {
+  
+const search = async (reset = true, siteOverride) => {
+    const effectiveSiteId = (siteOverride ?? siteId ?? '').trim();
+    if (!effectiveSiteId) return;
+
     setLoading(true);
     setErr('');
     abortRef.current?.abort();
@@ -20,69 +25,75 @@ export default function Sites() {
     abortRef.current = controller;
 
     try {
-      const res = await listDevicesBySite(siteId.trim(), reset ? null : nextKey, 20, controller.signal);
-      setItems(reset ? (res.items || []) : items.concat(res.items || []));
-      setNextKey(res.nextKey || null);
+        const res = await listDevicesBySite(
+            effectiveSiteId,
+            reset ? null : nextKey,
+            50,
+            controller.signal
+        );
+        setItems(reset ? (res.items || []) : items.concat(res.items || []));
+        setNextKey(res.nextKey || null);
     } catch (e) {
-      if (e.name !== 'AbortError') {
-        console.error(e);
-        setErr(e.response?.data?.error || e.message);
-      }
+        if (e.name !== 'AbortError') {
+            console.error(e);
+            setErr(e.response?.data?.error || e.message);
+        }
     } finally {
-      setLoading(false);
+        setLoading(false);
     }
-  };
+};
+
 
   useEffect(() => {
-    // no auto-load; user clicks Search
-  }, []);
+    if(!sitesLoading && sites.length>0 && !siteId){
+      const first = sites[0].site_id;
+      setSiteId(first);
+      search(true,first);
+    }
+    //eslist-disable-next-line react-hooks/exhaustive-deps
+  }, [sitesLoading, sites]);
 
   return (
     <div className="card2">
       <div className="row2">
         <h2>Sites</h2>
         <div className="grow" />
-        <input
-          value={siteId}
-          onChange={e => setSiteId(e.target.value)}
-          placeholder="site_id"
-        />
-        <button onClick={() => search(true)} disabled={loading}>Search</button>
+        
+<div className="controls">
+  {sitesError && (
+    <div className="error2">
+      Error loading sites: {sitesError}
+    </div>
+  )}
+
+  <select
+    value={siteId}
+    onChange={(e) => {
+      const newId = e.target.value;
+      setSiteId(newId);
+      search(true, newId);
+    }}
+    disabled={sitesLoading || sites.length === 0}
+  >
+    <option value="" disabled>
+      {sitesLoading ? 'Loading sites…' : 'Select site'}
+    </option>
+    {sites.map((s) => (
+      <option key={s.site_id} value={s.site_id}>
+        {s.name ?? s.site_id}
+      </option>
+    ))}
+  </select>
+
+  <button
+    onClick={() => search(true)}
+    disabled={loading || !siteId}
+  >
+    Refresh
+  </button>
+</div>
+
       </div>
-
-      {err && <div className="error2">Error: {err}</div>}
-      {loading && items.length === 0 && <Loader />}
-
-      {items.length === 0 && !loading ? (
-        <EmptyState title="No devices found for this site">
-          Try a different site_id or contact Support
-        </EmptyState>
-      ) : (
-        <div className="list2">
-          {items.map(it => (
-            <a key={it.device_id} className="row-item" href={`/device/${encodeURIComponent(it.device_id)}`}>
-              <div className="ri-title">
-                <strong>{it.device_id}</strong>
-                <span className="muted"> — {it.site_id ?? '-'}</span>
-              </div>
-              <div className="ri-sub">
-                <span>Updated: {it.ts ?? '-'}</span>
-              </div>
-              <div className="ri-chips">
-                <span className="chip2">PSI {fmt(it.pressure_psi)}</span>
-                <span className="chip2">Temp {fmt(it.temp_c)}°C</span>
-                <StatusPill ok={!!it.pump_running} text={it.pump_running ? 'Running' : 'Stopped'} />
-              </div>
-            </a>
-          ))}
-        </div>
-      )}
-
-      {nextKey && (
-        <div className="center">
-          <button onClick={() => search(false)} disabled={loading}>Load more</button>
-        </div>
-      )}
     </div>
   );
 }

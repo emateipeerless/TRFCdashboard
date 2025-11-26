@@ -29,6 +29,9 @@ export async function listDevicesBySite(siteId, nextKey = null, limit = 50, sign
   if (nextKey) qs.set('nextKey', nextKey);
   return authFetch(`/sites/${encodeURIComponent(siteId)}/devices?${qs.toString()}`, signal);
 }
+export async function getMySites(signal){
+  return authFetch('/sitesd',signal);
+}
 
 //proto bring in data
 export async function getProtoData(deviceid=null,signal){
