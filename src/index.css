@@ -1,122 +1,152 @@
 :root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
 }
 
 body {
-  margin: 0;
-  background: #0d1117;
-  color: #e6edf3;
+margin: 0;
+background: var(--bg);
+color: var(--text);
 }
 
 .container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 24px;
+max-width: 1200px;
+margin: 0 auto;
+padding: 24px;
 }
 
+/* Simple topbar used on some pages (not the main app shell) */
 .topbar {
-  display: flex;
-  align-items: center;
-  gap: 16px;
+display: flex;
+align-items: center;
+gap: 16px;
 }
 
 .topbar .spacer {
-  flex: 1;
+flex: 1;
 }
 
+/* Base button style (will be overridden by more specific classes if needed) */
 button {
-  padding: 8px 12px;
-  border: 1px solid #30363d;
-  background: #21262d;
-  color: #e6edf3;
-  border-radius: 6px;
-  cursor: pointer;
+padding: 8px 12px;
+border: 1px solid var(--border);
+background: var(--btn-bg-alt, #e5e7eb);
+color: var(--text);
+border-radius: 6px;
+cursor: pointer;
+font-size: 13px;
+}
+
+button:hover:not(:disabled) {
+background: var(--btn-hover, #e2e8ff);
 }
 
 button:disabled {
-  opacity: 0.6;
-  cursor: default;
+opacity: 0.6;
+cursor: default;
 }
+
+/* Generic card layout */
 
 .card {
-  background: #161b22;
-  border: 1px solid #30363d;
-  border-radius: 10px;
-  padding: 16px;
-  margin-bottom: 16px;
+background: var(--panel);
+border: 1px solid var(--border);
+border-radius: 10px;
+padding: 16px;
+margin-bottom: 16px;
 }
+
+/* Simple row layout */
 
 .row {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 12px;
+display: flex;
+gap: 8px;
+margin-bottom: 12px;
 }
+
+/* Inputs */
 
 input {
-  flex: 1;
-  padding: 8px;
-  border-radius: 6px;
-  border: 1px solid #30363d;
-  background: #0d1117;
-  color: #e6edf3;
+flex: 1;
+padding: 8px;
+border-radius: 6px;
+border: 1px solid var(--border);
+background: var(--bg);
+color: var(--text);
 }
 
+input::placeholder {
+color: var(--muted);
+}
+
+/* Grids */
+
 .grid {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 8px;
+display: grid;
+grid-template-columns: repeat(4, minmax(0, 1fr));
+gap: 8px;
 }
 
 .grid2 {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
+display: grid;
+grid-template-columns: 1fr 1fr;
+gap: 16px;
 }
 
+/* Tiles */
+
 .tile {
-  background: #0d1117;
-  border: 1px solid #30363d;
-  border-radius: 8px;
-  padding: 12px;
+background: var(--panel-elevated, var(--bg));
+border: 1px solid var(--border);
+border-radius: 8px;
+padding: 12px;
 }
 
 .tile-label {
-  font-size: 0.8rem;
-  opacity: 0.8;
+font-size: 0.8rem;
+color: var(--muted);
 }
 
 .tile-value {
-  font-size: 1.2rem;
-  font-weight: 600;
+font-size: 1.2rem;
+font-weight: 600;
+color: var(--text);
 }
 
+/* Lists */
+
 .list {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+display: flex;
+flex-direction: column;
+gap: 10px;
 }
 
 .list-item {
-  padding: 12px;
-  border: 1px solid #30363d;
-  border-radius: 10px;
-  background: #0d1117;
+padding: 12px;
+border: 1px solid var(--border);
+border-radius: 10px;
+background: var(--row-bg, var(--panel));
+color: var(--text);
 }
 
+/* Chips */
+
 .chips {
-  display: flex;
-  gap: 8px;
-  margin-top: 6px;
+display: flex;
+gap: 8px;
+margin-top: 6px;
 }
 
 .chip {
-  font-size: 0.85rem;
-  padding: 4px 8px;
-  border: 1px solid #30363d;
-  border-radius: 999px;
-  background: #161b22;
+font-size: 0.85rem;
+padding: 4px 8px;
+border: 1px solid var(--border);
+border-radius: 999px;
+background: var(--chip-bg, var(--panel));
+color: var(--text);
 }
 
+/* Errors */
+
 .error {
-  color: #ff8080;
+color: var(--danger-text, #b91c1c);
 }

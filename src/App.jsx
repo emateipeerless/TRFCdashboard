@@ -7,6 +7,7 @@ import DeviceInfo from './pages/DeviceInfo';
 import PrototypePage from './pages/PrototypePage';
 import TestingGraph from './pages/GraphTest';
 import { SitesProvider } from './SitesContext';
+import DeviceS from './pages/DeviceStyles';
 
 export default function App() {
   return (
@@ -20,6 +21,7 @@ export default function App() {
             <Route path="/device/:deviceId" element={<Device />} />
             <Route path="/device/:deviceId/info" element={<DeviceInfo />} />
             <Route path="/prototype" element={<PrototypePage />} />
+            <Route path="/styles/:deviceId" element={<DeviceS/>}/>
             <Route path="*" element={<Navigate to="/prototype" replace />} />
           </Routes>
         </AppLayout>
