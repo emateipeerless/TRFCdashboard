@@ -24,12 +24,16 @@ ChartJS.register(
   Legend
 );
 
-// 🔐 TODO: put your real API Gateway URL here:
+// 🔐 Lambda endpoint
 const RANGE_API_URL =
   'https://lyle5fozf7.execute-api.us-east-1.amazonaws.com/ProtoDates';
 
-// default deviceId stored in DynamoDB (from your screenshot)
+// default deviceId stored in DynamoDB
 const DEFAULT_DEVICE_ID = 'PROTO';
+
+// Max hours per chunked request to Lambda.
+// Keep this small enough that each individual query is safe.
+const MAX_CHUNK_HOURS = 24; // you can bump to 48/72 if your Lambda is comfy
 
 const PrototypePage = () => {
   const [points, setPoints] = useState([]); // { timestamp, rms }
@@ -40,7 +44,37 @@ const PrototypePage = () => {
   const [startDate, setStartDate] = useState(''); // datetime-local string
   const [endDate, setEndDate] = useState('');
 
-  // ---------------- date-range fetching (Lambda POST) ----------------
+  // Helper: split overall range into smaller [start,end] ISO windows
+  const buildChunks = (startIso, endIso) => {
+    const chunks = [];
+    const start = new Date(startIso);
+    const end = new Date(endIso);
+
+    if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())) {
+      return chunks;
+    }
+    if (start >= end) {
+      return chunks;
+    }
+
+    let currentStart = new Date(start);
+    const maxChunkMs = MAX_CHUNK_HOURS * 60 * 60 * 1000;
+
+    while (currentStart < end) {
+      let currentEnd = new Date(currentStart.getTime() + maxChunkMs);
+      if (currentEnd > end) currentEnd = new Date(end);
+
+      chunks.push({
+        startIso: currentStart.toISOString(),
+        endIso: currentEnd.toISOString(),
+      });
+
+      currentStart = new Date(currentEnd);
+    }
+    return chunks;
+  };
+
+  // ---------------- date-range fetching (Lambda POST, chunked) ----------------
   const loadRangeData = async () => {
     setError(null);
     if (!startDate || !endDate) {
@@ -57,56 +91,105 @@ const PrototypePage = () => {
       return;
     }
 
+    // Build smaller time windows so we never stress the Lambda with one huge query
+    const chunks = buildChunks(startIso, endIso);
+    if (chunks.length === 0) {
+      setError('Invalid time range selection.');
+      return;
+    }
+
     setLoading(true);
     try {
-      const res = await fetch(RANGE_API_URL, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          startDate: startIso,
-          endDate: endIso,
-          deviceId: DEFAULT_DEVICE_ID,
-        }),
-      });
+      const allPointsMap = new Map(); // key: timestamp, value: rms (keep max if duplicate)
 
-      if (!res.ok) {
-        const text = await res.text();
-        throw new Error(`Range API error: ${res.status} ${text}`);
+      for (const chunk of chunks) {
+        const res = await fetch(RANGE_API_URL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            startDate: chunk.startIso,
+            endDate: chunk.endIso,
+            deviceId: DEFAULT_DEVICE_ID,
+          }),
+        });
+
+        if (!res.ok) {
+          const text = await res.text();
+          throw new Error(
+            `Range API error for chunk ${chunk.startIso} – ${chunk.endIso}: ${res.status} ${text}`
+          );
+        }
+
+        const json = await res.json();
+        const chunkItems = Array.isArray(json.items) ? json.items : [];
+
+        for (const item of chunkItems) {
+          const ts = item.timestamp;
+          const rmsVal = Number(item.RMS ?? item.rms);
+          if (!ts || Number.isNaN(rmsVal)) continue;
+
+          // If we see the same timestamp from two chunks (boundary edge),
+          // keep the higher RMS – preserves local spikes.
+          const existing = allPointsMap.get(ts);
+          if (existing == null || rmsVal > existing) {
+            allPointsMap.set(ts, rmsVal);
+          }
+        }
       }
 
-      const json = await res.json();
-      // Lambda returns: { items: [ { deviceId, timestamp, RMS } ] }
-      let cleaned = Array.isArray(json.items)
-        ? json.items
-            .map((item) => ({
-              timestamp: item.timestamp,
-              // handle RMS or rms just in case
-              rms: Number(item.RMS ?? item.rms),
-            }))
-            .filter((p) => !!p.timestamp && !Number.isNaN(p.rms))
-        : [];
+      // Convert map -> array
+      let merged = Array.from(allPointsMap.entries()).map(([timestamp, rms]) => ({
+        timestamp,
+        rms,
+      }));
 
       // sort oldest -> newest
-      cleaned.sort(
+      merged.sort(
         (a, b) =>
           new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
       );
 
-      setPoints(cleaned);
+      setPoints(merged);
     } catch (e) {
       console.error('Error loading range data', e);
       setError(e.message || 'Failed to load range data');
+      setPoints([]);
     } finally {
       setLoading(false);
     }
   };
 
+  // Compute overall range (for label formatting)
+  const rangeMs =
+    points.length > 1
+      ? new Date(points[points.length - 1].timestamp).getTime() -
+        new Date(points[0].timestamp).getTime()
+      : 0;
+
   const formatTime = (iso) => {
     const d = new Date(iso);
     if (Number.isNaN(d.getTime())) return iso;
-    // show date+time since we’re looking at a range
+
+    // Very long range: date only
+    if (rangeMs > 7 * 24 * 60 * 60 * 1000) {
+      return d.toLocaleDateString(undefined, {
+        month: 'short',
+        day: '2-digit',
+      });
+    }
+
+    // Medium range: date + hour
+    if (rangeMs > 24 * 60 * 60 * 1000) {
+      return d.toLocaleString(undefined, {
+        month: 'short',
+        day: '2-digit',
+        hour: '2-digit',
+      });
+    }
+
+    // Short range: full date + time
     return d.toLocaleString(undefined, {
       month: 'short',
       day: '2-digit',
@@ -116,8 +199,15 @@ const PrototypePage = () => {
   };
 
   // ---------------- Chart.js data + options ----------------
+  const labels = points.map((p) => formatTime(p.timestamp));
+  const TARGET_LABEL_COUNT = 8;
+  const labelStep =
+    points.length > TARGET_LABEL_COUNT
+      ? Math.ceil(points.length / TARGET_LABEL_COUNT)
+      : 1;
+
   const chartData = {
-    labels: points.map((p) => formatTime(p.timestamp)),
+    labels,
     datasets: [
       {
         label: 'RMS (m/s²)',
@@ -125,7 +215,7 @@ const PrototypePage = () => {
         borderColor: '#34d399',
         backgroundColor: 'rgba(52, 211, 153, 0.2)',
         tension: 0.2,
-        pointRadius: 2,
+        pointRadius: 1.5,
         pointHoverRadius: 4,
       },
     ],
@@ -160,8 +250,15 @@ const PrototypePage = () => {
       x: {
         ticks: {
           color: '#e5e7eb',
-          maxRotation: 45,
-          minRotation: 45,
+          maxRotation: 0,
+          minRotation: 0,
+          autoSkip: false, // we handle skipping manually
+          callback: function (value, index) {
+            if (index % labelStep !== 0) {
+              return '';
+            }
+            return labels[index] ?? '';
+          },
         },
         grid: {
           color: 'rgba(75,85,99,0.3)',
@@ -190,13 +287,17 @@ const PrototypePage = () => {
     <div className="flex-col gap-6 p-6">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
-        <h1 className="text-2xl font-semibold text-white">Prototype Vibration Device</h1>
+        <h1 className="text-2xl font-semibold text-white">
+          Prototype Vibration Device
+        </h1>
         <span className="text-sm text-gray-400">{subtitle}</span>
       </div>
 
       {/* Date range controls */}
       <div className="bg-gray-900/70 rounded-xl p-4 border border-gray-700/60 mb-4">
-        <h2 className="text-lg font-medium text-white mb-3">Select Time Range</h2>
+        <h2 className="text-lg font-medium text-white mb-3">
+          Select Time Range
+        </h2>
         <div className="flex flex-wrap items-end gap-4">
           <div className="flex flex-col">
             <label className="text-sm text-gray-300 mb-1">Start</label>
@@ -226,26 +327,26 @@ const PrototypePage = () => {
         </div>
         {points.length > 0 && (
           <p className="text-xs text-gray-400 mt-2">
-            Showing {points.length} points from {formatTime(points[0].timestamp)} to{' '}
-            {formatTime(points[points.length - 1].timestamp)}.
+            Showing {points.length} points from {formatTime(points[0].timestamp)}{' '}
+            to {formatTime(points[points.length - 1].timestamp)}.
           </p>
         )}
       </div>
 
       {/* Status messages */}
-      {loading && (
-        <div className="text-gray-300 text-sm">Loading data…</div>
-      )}
-      {error && (
-        <div className="text-red-400 text-sm">Error: {error}</div>
-      )}
+      {loading && <div className="text-gray-300 text-sm">Loading data…</div>}
+      {error && <div className="text-red-400 text-sm">Error: {error}</div>}
       {!loading && !error && points.length === 0 && (
-        <div className="text-gray-500 text-sm">No data found in the selected range.</div>
+        <div className="text-gray-500 text-sm">
+          No data found in the selected range.
+        </div>
       )}
 
       {/* Chart */}
       <div className="bg-gray-900/70 rounded-xl p-4 border border-gray-700/60 h-[400px]">
-        <h2 className="text-lg font-medium text-white mb-3">RMS Vibration History (Custom Range)</h2>
+        <h2 className="text-lg font-medium text-white mb-3">
+          RMS Vibration History (Custom Range)
+        </h2>
         <Line data={chartData} options={chartOptions} />
       </div>
     </div>

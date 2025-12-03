@@ -5,7 +5,6 @@ import Sites from './pages/SiteDevices';
 import Device from './pages/DeviceLatest';
 import DeviceInfo from './pages/DeviceInfo';
 import PrototypePage from './pages/PrototypePage';
-import TestingGraph from './pages/GraphTest';
 import { SitesProvider } from './SitesContext';
 import DeviceS from './pages/DeviceStyles';
 
