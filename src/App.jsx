@@ -24,6 +24,7 @@ export default function App() {
             <Route path="/styles/:deviceId" element={<DeviceS/>}/>
             <Route path='/trends/:deviceId' element={<DeviceTrendsPage/>} />
             <Route path="*" element={<Navigate to="/prototype" replace />} />
+            <Route path="/sites" element={<Sites/>}/>
           </Routes>
         </AppLayout>
         </SitesProvider>

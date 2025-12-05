@@ -1,103 +1,103 @@
-import { useEffect, useRef, useState } from 'react';
-import { listDevicesBySite } from '../api';
+
+// src/pages/SiteDevices.jsx
+import { Link } from 'react-router-dom';
+import { useSites } from '../SitesContext';
 import Loader from '../components/Loader';
 import EmptyState from '../components/EmptyState';
-import StatusPill from '../components/StatusPill';
-import { useSites } from '../SitesContext';
 
 export default function Sites() {
-  const [siteId, setSiteId] = useState('');
-  const [items, setItems] = useState([]);
-  const [nextKey, setNextKey] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [err, setErr] = useState('');
-  const abortRef = useRef();
+  const { sites, loading, error } = useSites();
 
-  
-const search = async (reset = true, siteOverride) => {
-    const effectiveSiteId = (siteOverride ?? siteId ?? '').trim();
-    if (!effectiveSiteId) return;
-
-    setLoading(true);
-    setErr('');
-    abortRef.current?.abort();
-    const controller = new AbortController();
-    abortRef.current = controller;
-
-    try {
-        const res = await listDevicesBySite(
-            effectiveSiteId,
-            reset ? null : nextKey,
-            50,
-            controller.signal
-        );
-        setItems(reset ? (res.items || []) : items.concat(res.items || []));
-        setNextKey(res.nextKey || null);
-    } catch (e) {
-        if (e.name !== 'AbortError') {
-            console.error(e);
-            setErr(e.response?.data?.error || e.message);
-        }
-    } finally {
-        setLoading(false);
-    }
-};
-
-
-  useEffect(() => {
-    if(!sitesLoading && sites.length>0 && !siteId){
-      const first = sites[0].site_id;
-      setSiteId(first);
-      search(true,first);
-    }
-    //eslist-disable-next-line react-hooks/exhaustive-deps
-  }, [sitesLoading, sites]);
+  const hasSites = Array.isArray(sites) && sites.length > 0;
 
   return (
-    <div className="card2">
-      <div className="row2">
-        <h2>Sites</h2>
-        <div className="grow" />
-        
-<div className="controls">
-  {sitesError && (
-    <div className="error2">
-      Error loading sites: {sitesError}
-    </div>
-  )}
-
-  <select
-    value={siteId}
-    onChange={(e) => {
-      const newId = e.target.value;
-      setSiteId(newId);
-      search(true, newId);
-    }}
-    disabled={sitesLoading || sites.length === 0}
-  >
-    <option value="" disabled>
-      {sitesLoading ? 'Loading sites…' : 'Select site'}
-    </option>
-    {sites.map((s) => (
-      <option key={s.site_id} value={s.site_id}>
-        {s.name ?? s.site_id}
-      </option>
-    ))}
-  </select>
-
-  <button
-    onClick={() => search(true)}
-    disabled={loading || !siteId}
-  >
-    Refresh
-  </button>
-</div>
-
+    <div className="page sites-page">
+      {/* Header */}
+      <div className="page-header">
+        <div className="page-header-left">
+          <h1 className="page-title">Sites</h1>
+          <p className="page-subtitle">
+            All devices and sites assigned to your account. Select a row to open
+            the latest snapshot or trends for that device.
+          </p>
+        </div>
       </div>
+
+      {/* Loading / error states */}
+      {loading && <Loader text="Loading your sites…" />}
+
+      {error && !loading && (
+        <div className="error2">Error loading sites: {String(error)}</div>
+      )}
+
+      {!loading && !error && !hasSites && (
+        <EmptyState
+          title="No sites assigned yet"
+          body="You don’t have any sites associated with your account. If you believe this is incorrect, contact your administrator."
+        />
+      )}
+
+      {!loading && !error && hasSites && (
+        <section className="panel">
+          <div className="panel-header-row">
+            <div>
+              <h2 className="panel-title">Your devices</h2>
+              <p className="panel-subtitle">
+                One row per assigned site/device. Actions take you directly into
+                the live device views.
+              </p>
+            </div>
+          </div>
+
+          <div className="sites-table-wrapper">
+            <table className="sites-table">
+              <thead>
+                <tr>
+                  <th align="left">Site / Device</th>
+                  <th align="left">ID</th>
+                  <th align="left">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {sites.map((site) => {
+                  const id = site.site_id ?? site.id ?? '';
+                  const name = site.name ?? id ?? 'Unnamed site';
+
+                  return (
+                    <tr key={id || Math.random()}>
+                      <td>
+                        <div className="sites-name-cell">
+                          <span className="sites-name-primary">{name}</span>
+                        </div>
+                      </td>
+                      <td>
+                        <code className="sites-id">{id}</code>
+                      </td>
+                      <td>
+                        <div className="sites-actions">
+                          <Link
+                            to={`/device/${encodeURIComponent(id)}`}
+                            className="link2 subtle"
+                          >
+                            Latest snapshot
+                          </Link>
+                          <span className="sites-actions-sep">•</span>
+                          <Link
+                            to={`/trends/${encodeURIComponent(id)}`}
+                            className="link2 subtle"
+                          >
+                            Trends
+                          </Link>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </section>
+      )}
     </div>
   );
-}
-
-function fmt(n) {
-  return (n === undefined || n === null) ? '-' : Number(n).toFixed(1);
 }
