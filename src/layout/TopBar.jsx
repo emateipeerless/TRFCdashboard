@@ -8,38 +8,42 @@ export default function Topbar() {
 
   // theme: 'light' or 'dark'
   const [theme, setTheme] = useState(() => {
-    if (typeof window === 'undefined') return 'dark'; // fallback for SSR
-    return localStorage.getItem('theme') || 'dark'; // start with your current dark look
+    if (typeof window === 'undefined') return 'dark';
+    return localStorage.getItem('theme') || 'dark';
   });
 
-  // apply theme to <html data-theme="...">
   useEffect(() => {
-    const root = document.documentElement; // <html>
-    root.setAttribute('data-theme', theme);
+    const html = document.documentElement;
+    html.setAttribute('data-theme', theme);
     localStorage.setItem('theme', theme);
   }, [theme]);
 
-  const toggleTheme = () => {
-    setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'));
-  };
-
   const isDark = theme === 'dark';
+  const toggleTheme = () => setTheme((t) => (t === 'dark' ? 'light' : 'dark'));
 
   return (
-    <header className="topbar2">
-      <h1>Turf Connect Dashboard</h1>
-      <div className="grow" />
+    <header className="topbar">
+      <div className="topbar-left">
+        <h1 className="topbar-title">TurfConnect Device Console</h1>
+        <span className="topbar-subtitle">Live status & trends</span>
+      </div>
 
-      {/* Theme toggle button */}
-      <button type="button" onClick={toggleTheme}>
-        {isDark ? 'Change to Light mode' : 'Change to Dark mode'}
-      </button>
-
-      <div className="user-pill">
-        <span>{email}</span>
-        <button type="button" onClick={signOut}>
-          Sign out
+      <div className="topbar-right">
+        {/* Theme toggle button */}
+        <button
+          type="button"
+          className="topbar-toggle"
+          onClick={toggleTheme}
+        >
+          {isDark ? 'Light theme' : 'Dark theme'}
         </button>
+
+        <div className="user-pill">
+          <span className="user-email">{email}</span>
+          <button type="button" onClick={signOut}>
+            Sign out
+          </button>
+        </div>
       </div>
     </header>
   );

@@ -7,6 +7,7 @@ import DeviceInfo from './pages/DeviceInfo';
 import PrototypePage from './pages/PrototypePage';
 import { SitesProvider } from './SitesContext';
 import DeviceS from './pages/DeviceStyles';
+import DeviceTrendsPage from './pages/DeviceTrends';
 
 export default function App() {
   return (
@@ -21,6 +22,7 @@ export default function App() {
             <Route path="/device/:deviceId/info" element={<DeviceInfo />} />
             <Route path="/prototype" element={<PrototypePage />} />
             <Route path="/styles/:deviceId" element={<DeviceS/>}/>
+            <Route path='/trends/:deviceId' element={<DeviceTrendsPage/>} />
             <Route path="*" element={<Navigate to="/prototype" replace />} />
           </Routes>
         </AppLayout>

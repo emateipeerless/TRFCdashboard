@@ -484,7 +484,7 @@ export default function DeviceS() {
                                                                                                     }
 
                                                                                                     /* ------------------------------
-                                                                                                    * Layout C – Compact KPI grid
+                                                                                                    * Layout C – Compact KPI grid plus graphs on the right
                                                                                                     * ------------------------------ */
                                                                                                     function DeviceLayoutC({ data, running, deviceTs, lastSeen }) {
                                                                                                         const cards = [
