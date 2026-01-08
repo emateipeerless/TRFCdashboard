@@ -212,7 +212,7 @@ const PrototypePage = () => {
       {
         label: 'RMS (m/s²)',
         data: points.map((p) => p.rms),
-        borderColor: '#34d399',
+        borderColor: '#1B5B95',
         backgroundColor: 'rgba(52, 211, 153, 0.2)',
         tension: 0.2,
         pointRadius: 1.5,
@@ -231,7 +231,7 @@ const PrototypePage = () => {
     plugins: {
       legend: {
         labels: {
-          color: '#e5e7eb',
+          color: '#1B5B95',
         },
       },
       tooltip: {
@@ -249,7 +249,7 @@ const PrototypePage = () => {
     scales: {
       x: {
         ticks: {
-          color: '#e5e7eb',
+          color: '#1B5B95',
           maxRotation: 0,
           minRotation: 0,
           autoSkip: false, // we handle skipping manually
@@ -266,7 +266,7 @@ const PrototypePage = () => {
       },
       y: {
         ticks: {
-          color: '#e5e7eb',
+          color: '#1B5B95',
         },
         grid: {
           color: 'rgba(75,85,99,0.3)',
@@ -274,7 +274,7 @@ const PrototypePage = () => {
         title: {
           display: true,
           text: 'RMS (m/s²)',
-          color: '#e5e7eb',
+          color: '#1B5B95',
         },
       },
     },
@@ -288,43 +288,45 @@ const PrototypePage = () => {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
         <h1 className="text-2xl font-semibold text-white">
-          Prototype Vibration Device
+          Vibration Device
         </h1>
-        <span className="text-sm text-gray-400">{subtitle}</span>
       </div>
 
       {/* Date range controls */}
-      <div className="bg-gray-900/70 rounded-xl p-4 border border-gray-700/60 mb-4">
-        <h2 className="text-lg font-medium text-white mb-3">
-          Select Time Range
-        </h2>
-        <div className="flex flex-wrap items-end gap-4">
-          <div className="flex flex-col">
-            <label className="text-sm text-gray-300 mb-1">Start</label>
-            <input
-              type="datetime-local"
-              value={startDate}
-              onChange={(e) => setStartDate(e.target.value)}
-              className="bg-gray-800 text-gray-100 text-sm rounded-md px-3 py-2 border border-gray-600"
-            />
-          </div>
-          <div className="flex flex-col">
-            <label className="text-sm text-gray-300 mb-1">End</label>
-            <input
-              type="datetime-local"
-              value={endDate}
-              onChange={(e) => setEndDate(e.target.value)}
-              className="bg-gray-800 text-gray-100 text-sm rounded-md px-3 py-2 border border-gray-600"
-            />
-          </div>
-          <button
-            onClick={loadRangeData}
-            disabled={loading}
-            className="px-4 py-2 rounded-full bg-emerald-400 text-gray-900 font-semibold text-sm disabled:bg-gray-600"
-          >
-            {loading ? 'Loading…' : 'Load Range'}
-          </button>
+      
+    <div className="date-range-card">
+      <h2 className="date-range-title">Select Time Range</h2>
+
+      <div className="date-range-controls">
+        <div className="date-field">
+          <label className="date-label">Start</label>
+          <input
+            type="datetime-local"
+            value={startDate}
+            onChange={(e) => setStartDate(e.target.value)}
+            className="date-input"
+          />
         </div>
+
+        <div className="date-field">
+          <label className="date-label">End</label>
+          <input
+            type="datetime-local"
+            value={endDate}
+            onChange={(e) => setEndDate(e.target.value)}
+            className="date-input"
+          />
+        </div>
+
+        <button
+          onClick={loadRangeData}
+          disabled={loading}
+          className="date-toggle"
+        >
+          {loading ? 'Loading…' : 'Load Range'}
+        </button>
+    </div>
+
         {points.length > 0 && (
           <p className="text-xs text-gray-400 mt-2">
             Showing {points.length} points from {formatTime(points[0].timestamp)}{' '}

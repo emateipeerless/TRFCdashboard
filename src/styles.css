@@ -4,7 +4,7 @@
 /* LIGHT THEME (Peerless Blue) */
 :root {
 --bg: #EEEEEE; /* Steam */
---panel: #ffffff;
+--panel: #d3dee8;
 --panel-elevated: #d3dee8;
 --sidebar-bg: #1B5B95;
 
@@ -739,6 +739,24 @@ color: var(--text);
 font-size: 12px;
 }
 
+.topbar-toggle {
+border-radius: 999px;
+border: 1px solid var(--border);
+padding: 6px 12px;
+background: var(--btn-bg-alt);
+color: var(--text);
+font-size: 12px;
+}
+
+.date-toggle {
+border-radius: 999px;
+border: 1px solid var(--border);
+padding: 6px 12px;
+background: var(--btn-bg-alt);
+color: var(--text);
+font-size: 15px;
+}
+
 .topbar-toggle:hover {
 background: var(--btn-hover);
 }
@@ -1105,4 +1123,80 @@ font-size: 12px;
 
 .sites-actions-sep {
 color: var(--muted);
+}
+
+
+
+/* DATE SELECTION STYLING BELOW */
+.date-range-card {
+background: var(--panel);
+border: 1px solid var(--border);
+border-radius: 12px;
+padding: 16px;
+margin-bottom: 16px;
+}
+
+
+.date-range-title {
+font-size: 1.05rem;
+font-weight: 500;
+color: var(--text);
+margin-bottom: 12px;
+}
+
+
+.date-range-controls {
+display: flex;
+flex-wrap: wrap;
+align-items: flex-end;
+gap: 16px;
+}
+
+.date-field {
+display: flex;
+flex-direction: column;
+}
+
+
+.date-label {
+font-size: 0.8rem;
+color: var(--muted);
+margin-bottom: 4px;
+}
+
+.date-input {
+background: var(--row-bg);
+color: var(--text);
+border: 1px solid var(--border);
+border-radius: 6px;
+padding: 8px 10px;
+font-size: 0.85rem;
+min-width: 210px;
+}
+
+.date-input:focus {
+outline: none;
+border-color: var(--accent);
+box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 30%, transparent);
+}
+
+
+.date-toggle {
+background: var(--accent-soft);
+color: var(--text);
+border: 1px solid var(--border);
+border-radius: 8px;
+padding: 8px 14px;
+font-size: 0.85rem;
+cursor: pointer;
+transition: background 0.15s ease, transform 0.1s ease;
+}
+
+.date-toggle:hover:not(:disabled) {
+background: var(--btn-hover);
+}
+
+.date-toggle:disabled {
+opacity: 0.6;
+cursor: not-allowed;
 }
