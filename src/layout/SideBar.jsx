@@ -3,7 +3,7 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { useSites } from '../SitesContext';
-import logo from '../assets/logo.png'
+import logo from '../assets/logoD.png'
 
 export default function Sidebar() {
   const { sites, loading } = useSites();

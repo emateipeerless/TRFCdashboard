@@ -1,81 +1,75 @@
 /* THEME VARIABLES
 ------------------------------------------------------------------ */
 
-/* LIGHT THEME (default) */
+/* LIGHT THEME (Peerless Blue) */
 :root {
-/* Core colors */
---bg: #f3f4f6; /* page background */
---panel: #ffffff; /* main cards */
---panel-elevated: #f9fafb; /* header / sub-panels */
---sidebar-bg: #ffffff;
---border: #d1d5db;
---text: #020617;
---muted: #6b7280;
+--bg: #EEEEEE; /* Steam */
+--panel: #ffffff;
+--panel-elevated: #f7f7f7;
+--sidebar-bg: #981116;
 
-/* Accent (TurfConnect green) */
---accent: #16a34a;
---accent-soft: #dcfce7;
+--border: #d6dde3;
+--text: #0D2635; /* Ink */
+--muted: #4b5b67;
+--mutedside: #ffffff;
 
-/* Buttons / links */
---btn-bg: #e5f2ff;
---btn-bg-alt: #e5e7eb;
---btn-hover: #dbeafe;
---link-bg: #e5f2ff;
+--accent: #6F1515; /* Peerless Blue */
+--accent-soft: #6F1515; /* soft blue tint */
 
-/* List / tiles */
---row-bg: #f9fafb;
---row-hover: #e5e7eb;
---chip-bg: #e5f2ff;
+--btn-bg: #E6F2FF;
+--btn-bg-alt: #f0f2f4;
+--btn-hover: #d7ebff;
+--link-bg: #E6F2FF;
+
+--row-bg: #ffffff;
+--row-hover: #6F1515;
+--chip-bg: #E6F2FF;
 --tile-bg: #ffffff;
 
-/* Status / alerts */
---danger-bg: #fef2f2;
---danger-border: #fecaca;
---danger-text: #b91c1c;
+--danger-bg: #fdecec;
+--danger-border: #f3b7b7;
+--danger-text: #981116; /* Fire */
 
-/* Gauge 90 */
 --g90-arc-bg: #e5e7eb;
---g90-tick: #d4d4f0;
---g90-needle: #0f172a;
---g90-text-muted: #6b7280;
+--g90-tick: #cfd8df;
+--g90-needle: #0D2635; /* Ink */
+--g90-text-muted: #4b5b67;
 }
 
-/* DARK THEME (more mid-tone, less “black hole”) */
+/* DARK THEME (Ink + Storm, Blue accent) */
 [data-theme="dark"] {
---bg: #0b1120; /* deep navy */
---panel: #111827; /* main cards */
---panel-elevated: #1f2933; /* headers / highlights */
---sidebar-bg: #020617;
---border: #273549;
---text: #e5e7eb;
---muted: #9ca3af;
+--bg: #0D2635; /* Ink */
+--panel: #00313C; /* Storm */
+--panel-elevated: #073E48; /* slightly lifted Storm */
+--sidebar-bg: #00313C;
 
---accent: #6fd970;
---accent-soft: #12301a;
+--border: #1A4B57;
+--text: #EEEEEE; /* Steam */
+--muted: #b7c3cb;
 
-/* Buttons / links */
---btn-bg: #1f2933;
---btn-bg-alt: #1f2933;
---btn-hover: #243447;
---link-bg: #1f2933;
+--accent: #0166C0; /* Peerless Blue */
+--accent-soft: #0B3559; /* blue tint on dark */
 
-/* List / tiles */
---row-bg: #0f1722;
---row-hover: #111827;
---chip-bg: #111827;
---tile-bg: #0f1722;
+--btn-bg: #0f3a49;
+--btn-bg-alt: #0f3a49;
+--btn-hover: #12485a;
+--link-bg: #0f3a49;
 
-/* Status / alerts */
---danger-bg: #341d1d;
---danger-border: #6b2f2f;
+--row-bg: #0b2c36;
+--row-hover: #0f3a49;
+--chip-bg: #0b2c36;
+--tile-bg: #00313C;
+
+--danger-bg: #2a1517;
+--danger-border: #6d2a2f;
 --danger-text: #ffb3b3;
 
-/* Gauge 90 – less black, more contrast */
---g90-arc-bg: #1f2933;
---g90-tick: #374151;
---g90-needle: #e5e7eb;
---g90-text-muted: #9ca3af;
+--g90-arc-bg: #0f3a49;
+--g90-tick: #2a5966;
+--g90-needle: #EEEEEE;
+--g90-text-muted: #b7c3cb;
 }
+
 
 /* RESET / BASE
 ------------------------------------------------------------------ */
@@ -943,7 +937,7 @@ padding: 0 4px;
 font-size: 10px;
 text-transform: uppercase;
 letter-spacing: 0.08em;
-color: var(--muted);
+color: var(--mutedside);
 margin-bottom: 4px;
 }
 
@@ -989,12 +983,14 @@ flex-shrink: 0;
 
 .nav-link-active .nav-link-indicator {
 background: var(--accent);
+
 }
 
 .nav-link-label {
 white-space: nowrap;
 text-overflow: ellipsis;
 overflow: hidden;
+color: var(--mutedside);
 }
 
 /* Sidebar footer */
@@ -1006,7 +1002,7 @@ margin-top: 10px;
 display: flex;
 justify-content: space-between;
 font-size: 11px;
-color: var(--muted);
+color: var(--mutedside);
 }
 
 .sidebar-env {
